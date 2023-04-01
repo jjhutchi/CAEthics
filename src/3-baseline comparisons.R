@@ -81,7 +81,7 @@ for (i in 1:25) {
 }
 
 caption = "Notes:
-Mean responses in the baseline and experiemnt conditions were compared with
+Mean responses in the baseline and experiment conditions were compared with
 two-way paired t-test across all counter balance groups. This plot does not 
 correct for multiple tests, and should be viewed as descriptive evidence that 
 participants responded differently in the main experiment than in the baseline scenario."
