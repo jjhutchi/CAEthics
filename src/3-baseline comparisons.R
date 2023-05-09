@@ -88,7 +88,7 @@ participants responded differently in the main experiment than in the baseline s
 
 plt = tstats |> 
   mutate(facet_name = case_when(
-    questions == "Q1|Q2|Q3" ~ "Accessibility", 
+    questions == "Q1|Q2|Q3" ~ "Acceptability", 
     questions == "Q4|Q5|Q6" ~ "Autonomy", 
     TRUE ~ "Success"
   )) |> 
