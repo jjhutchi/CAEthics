@@ -307,12 +307,21 @@ for (DV in dvs) {
 #      with 5 CIs, there are 10 pairwise comparisons
 #   => alpha = 1 - 0.05 / m; 
 #      m = number of pairwise comparisons (10)
-plot_five_five = function(data, groups) {
-  
-  # # testing 
+plot_five_five = function(data, groups, bonferroni_correction=FALSE) {
+
+  # testing
   # data = intervention_domain
   # group = "ID"
-  # # 
+  #
+  if(bonferroni_correction) {
+    alpha = 0.05 / 125
+    caption = "Error bars show 95% CI with Bonferroni corrections for a total of 125 comparisons."
+  } else {
+    alpha = 0.05
+    caption = "Error bars show 95% CI without Bonferroni corrections for multiple hypothesis testing."
+  }
+  
+  crit_value = qnorm(1 - alpha / 2) 
   
   plt = data |> 
     filter(!var %in% c("(Intercept)", "CB", "EndDate") ) |> 
@@ -322,18 +331,18 @@ plot_five_five = function(data, groups) {
                               TRUE ~ "OTHER"), 
            var = gsub("Domain|Intervention|Rationale", "", var)) |> 
     ggplot(aes(x = dv, y = Estimate, color = var, 
-               ymin = Estimate - 1.96 * Std..Error, ymax =Estimate + 1.96 * Std..Error )) +
+               ymin = Estimate - crit_value * Std..Error, ymax = Estimate + crit_value * Std..Error )) +
     geom_point(position = position_dodge(0.7)) + 
     geom_errorbar(position = position_dodge(0.7), width = 0.2) +
     scale_color_viridis_d() + 
-    scale_y_continuous(limits = c(2.3, 7)) +
+    scale_y_continuous(limits = c(1.7, 7)) +
     theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1), 
           legend.position = "bottom", 
           panel.spacing.x=unit(0.1, "lines"), 
           panel.spacing.y=unit(0.1, "lines"),
           plot.subtitle = element_blank(), 
           strip.text = element_text(size = 8)) + 
-    labs(caption = "Error bars show 95% CI", 
+    labs(caption = caption, 
          color = "Measure")
   
   # control facet wrap by pairwise group
@@ -357,3 +366,11 @@ plot_five_five(domain_rationale, "DR")
 ggsave(filename = file.path(result_path, "plots",  sprintf("domain-rationale.png")), height = height, width = width)
 plot_five_five(intervention_rationale, "IR")
 ggsave(filename = file.path(result_path, "plots",  sprintf("intervention-rationale.png")), height = height, width = width)
+
+# repeat analysis with Bonferroni corrections. 
+plot_five_five(intervention_domain, "ID", bonferroni_correction=TRUE)
+ggsave(filename = file.path(result_path, "plots",  sprintf("intervention-domain-bon.png")), height = height, width = width)
+plot_five_five(domain_rationale, "DR", bonferroni_correction=TRUE)
+ggsave(filename = file.path(result_path, "plots",  sprintf("domain-rationale-bon.png")), height = height, width = width)
+plot_five_five(intervention_rationale, "IR", bonferroni_correction=TRUE)
+ggsave(filename = file.path(result_path, "plots",  sprintf("intervention-rationale-bon.png")), height = height, width = width)
