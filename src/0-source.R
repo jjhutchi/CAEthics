@@ -3,7 +3,7 @@
 # Setting paths and formatting
 
 # Paths
-path = file.path("~/Dropbox", "Ethics Data Analysis", "Stage 2 Analyses")
+path = file.path("~/Dropbox (BEAR)", "Ethics Data Analysis", "Stage 2 Analyses")
 result_path = file.path(path, "results")
 
 # Plot formatting
