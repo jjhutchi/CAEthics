@@ -54,7 +54,6 @@ fmla = as.formula("response ~ Domain + Intervention + Rationale + BatchDate + CB
 fmla_int = as.formula("response ~ Domain + Intervention + Rationale + Domain*Intervention + Domain*Rationale + Rationale*Intervention + Domain*Intervention*Rationale + BatchDate + CB + (1 | ResponseId)")
 
 if(SKIP_CLMM_ESTIMATION) { # skip estimation (~10 hours to run on PC with i7 16GB RAM) and read in results from Dropbox
-
   
   # manually read files in from dropbox 
   fit_acc_c = read_result("fit_acc_c")
@@ -63,12 +62,26 @@ if(SKIP_CLMM_ESTIMATION) { # skip estimation (~10 hours to run on PC with i7 16G
   fit_acc_int_c = read_result("fit_acc_int_c")
   fit_auto_int_c = read_result("fit_auto_int_c")
   fit_suc_int_c = read_result("fit_suc_int_c")  
-  aov_fit_acc_c = read_result("aov_fit_acc_c") # missing in dir
+  aov_fit_acc_c = read_result("aov_fit_acc_c")
   aov_fit_auto_c = read_result("aov_fit_auto_c")
   aov_fit_suc_c = read_result("aov_fit_suc_c")
   aov_fit_acc_int_c = read_result("aov_fit_acc_int_c")
   aov_fit_auto_int_c = read_result("aov_fit_auto_int_c")
-  aov_fit_suc_int_c = read_result("aov_fit_suc_int_c")
+  aov_fit_suc_int_c = read_result("aov_fit_suc_int_c")  
+  
+  # read in first batch files
+  fit_acc_c = read_result("fit_acc_c_first_batch")
+  fit_auto_c = read_result("fit_auto_c_first_batch")
+  fit_suc_c = read_result("fit_suc_c_first_batch")
+  fit_acc_int_c = read_result("fit_acc_int_c_first_batch")
+  fit_auto_int_c = read_result("fit_auto_int_c_first_batch")
+  fit_suc_int_c = read_result("fit_suc_int_c_first_batch")  
+  aov_fit_acc_c = read_result("aov_fit_acc_c_first_batch")
+  aov_fit_auto_c = read_result("aov_fit_auto_c_first_batch")
+  aov_fit_suc_c = read_result("aov_fit_suc_c_first_batch")
+  aov_fit_acc_int_c = read_result("aov_fit_acc_int_c_first_batch")
+  aov_fit_auto_int_c = read_result("aov_fit_auto_int_c_first_batch")
+  aov_fit_suc_int_c = read_result("aov_fit_suc_int_c_first_batch")
 } else {
   
   tik = Sys.time()
@@ -79,20 +92,20 @@ if(SKIP_CLMM_ESTIMATION) { # skip estimation (~10 hours to run on PC with i7 16G
   fit_acc_int_c  = clmm(formula = fmla_int, data = df_acc_fct)
   fit_auto_int_c = clmm(formula = fmla_int, data = df_auto_fct)
   fit_suc_int_c  = clmm(formula = fmla_int, data = df_succ_fct)
-  
+
   aov_fit_acc_c = Anova.clmm(fit_acc_c)
   aov_fit_auto_c = Anova.clmm(fit_auto_c)
   aov_fit_suc_c = Anova.clmm(fit_suc_c)
   aov_fit_acc_int_c = Anova.clmm(fit_acc_int_c)
   aov_fit_auto_int_c = Anova.clmm(fit_auto_int_c)
   aov_fit_suc_int_c = Anova.clmm(fit_suc_int_c)
-  
+
   save_results(fit_acc_c)
   save_results(fit_auto_c)
   save_results(fit_suc_c)
   save_results(fit_acc_int_c)
   save_results(fit_auto_int_c)
-  save_results(fit_suc_int_c)  
+  save_results(fit_suc_int_c)
   save_results(aov_fit_acc_c)
   save_results(aov_fit_auto_c)
   save_results(aov_fit_suc_c)
@@ -100,9 +113,40 @@ if(SKIP_CLMM_ESTIMATION) { # skip estimation (~10 hours to run on PC with i7 16G
   save_results(aov_fit_auto_int_c)
   save_results(aov_fit_suc_int_c)
   
+  # repeat only using the participants collected in the first batch
+  fmla = as.formula("response ~ Domain + Intervention + Rationale  + CB + (1 | ResponseId)")
+  fmla_int = as.formula("response ~ Domain + Intervention + Rationale + Domain*Intervention + Domain*Rationale + Rationale*Intervention + Domain*Intervention*Rationale + CB + (1 | ResponseId)")
+  
+  fit_acc_c_first_batch  = clmm(formula = fmla, data = subset(df_acc_fct, BatchDate == "2023-01-11"))
+  fit_auto_c_first_batch = clmm(formula = fmla, data = subset(df_auto_fct, BatchDate == "2023-01-11"))
+  fit_suc_c_first_batch  = clmm(formula = fmla, data = subset(df_succ_fct, BatchDate == "2023-01-11"))
+  fit_acc_int_c_first_batch  = clmm(formula = fmla_int, data = subset(df_acc_fct, BatchDate == "2023-01-11"))
+  fit_auto_int_c_first_batch = clmm(formula = fmla_int, data = subset(df_auto_fct, BatchDate == "2023-01-11"))
+  fit_suc_int_c_first_batch  = clmm(formula = fmla_int, data = subset(df_succ_fct, BatchDate == "2023-01-11"))
+  
+  aov_fit_acc_c_first_batch = Anova.clmm(fit_acc_c_first_batch)
+  aov_fit_auto_c_first_batch = Anova.clmm(fit_auto_c_first_batch)
+  aov_fit_suc_c_first_batch = Anova.clmm(fit_suc_c_first_batch)
+  aov_fit_acc_int_c_first_batch = Anova.clmm(fit_acc_int_c_first_batch)
+  aov_fit_auto_int_c_first_batch = Anova.clmm(fit_auto_int_c_first_batch)
+  aov_fit_suc_int_c_first_batch = Anova.clmm(fit_suc_int_c_first_batch)
+  
+  save_results(fit_acc_c_first_batch)
+  save_results(fit_auto_c_first_batch)
+  save_results(fit_suc_c_first_batch)
+  save_results(fit_acc_int_c_first_batch)
+  save_results(fit_auto_int_c_first_batch)
+  save_results(fit_suc_int_c_first_batch)  
+  save_results(aov_fit_acc_c_first_batch)
+  save_results(aov_fit_auto_c_first_batch)
+  save_results(aov_fit_suc_c_first_batch)
+  save_results(aov_fit_acc_int_c_first_batch)
+  save_results(aov_fit_auto_int_c_first_batch)
+  save_results(aov_fit_suc_int_c_first_batch)
+  
   tok = Sys.time()
   log = sprintf("CLMM models took %s %s\nStart: %s\nEnd: %s", round(tok-tik, 2), units(tok-tik), tik, tok)
-  write(log, file = file.path(result_path, "models", "log", sprintf("CMER-results-%s.txt", gsub(":", "", Sys.time()))))
+  write(log, file = file.path(result_path, "models", "log", sprintf("CMER-results-first-batch-%s.txt", gsub(":", "", Sys.time()))))
 }
 
 
@@ -146,13 +190,41 @@ tbl |>
   add_header_above(c(" ", "Acceptability" = 4, "Autonomy" = 4, "Success" = 4)) |> 
   save_kable(file = file.path(result_path, "tables", "F_stat_all_dv_tbl.html"))
 
+#' Clean up ANOVA results for table - repeat for first batch
+
+tbl_first_batch = merge(format_table(aov_fit_acc_int_c_first_batch), 
+            format_table(aov_fit_auto_int_c_first_batch),
+            by = "var", 
+            all.x = TRUE) |> 
+  merge(format_table(aov_fit_suc_int_c_first_batch),
+        by = "var", 
+        all.x = TRUE)
+
+tbl_first_batch = tbl_first_batch[c(2, 6, 8, 3, 5, 7, 4, 1), ] # reorder rows manually
+col_names = c("ChiSq", "Df", "P-value", "") # rename cols
+
+tbl_first_batch |> 
+  kbl(digits = 3, 
+      align = "lrrrlrrrlrrrl",
+      col.names = c("", rep(col_names, 3)), 
+      row.names = FALSE, 
+      caption = "Analysis of Deviance Across Interaction Models") |> 
+  kable_classic_2() |> 
+  add_header_above(c(" ", "Acceptability" = 4, "Autonomy" = 4, "Success" = 4)) |> 
+  save_kable(file = file.path(result_path, "tables", "F_stat_all_dv_tbl_first_batch.html"))
+
 
 # Bar plots ---- 
 
-common_barplot = function(DV, IV) {
+common_barplot = function(DV, IV, first_batch=FALSE) {
   
   # subset data to DV and IV
-  tmp = subset(df, variable_group == DV)
+  if(first_batch) {
+    tmp = subset(df, variable_group == DV & BatchDate == "2023-01-11")
+  } else {
+    tmp = subset(df, variable_group == DV)
+  }
+  
   fmla = as.formula(sprintf("response ~ %s * ResponseId", IV))
   dat = aggregate(fmla, tmp, mean)
   plot_dat = Rmisc::summarySE(dat, measurevar = "response", groupvars=c(IV))
@@ -177,10 +249,15 @@ common_barplot = function(DV, IV) {
 }
 
 #' used to give adhoc overlapping of common barplots
-overlapping_ci_plot = function(DV, IV) {
+overlapping_ci_plot = function(DV, IV, first_batch=FALSE) {
   
   # subset data to DV and IV
-  tmp = subset(df, variable_group == DV)
+  if(first_batch) {
+    tmp = subset(df, variable_group == DV & BatchDate == "2023-01-11")
+  } else {
+    tmp = subset(df, variable_group == DV)
+  }
+  
   fmla = as.formula(sprintf("response ~ %s * ResponseId", IV))
   dat = aggregate(fmla, tmp, mean)
   plot_dat = Rmisc::summarySE(dat, measurevar = "response", groupvars=c(IV))
@@ -219,6 +296,18 @@ for (DV in c("Acceptability", "Autonomy", "Success")) {
     ggsave(filename = file.path(result_path, "plots",  sprintf("overlap-barplot-%s-%s.png", DV, IV)), 
            plot = plt, 
            height = 3.5, # we can change dimensions of the plot output here
+           width = 5.5)    
+    
+    plt = common_barplot(DV, IV, first_batch=TRUE)
+    ggsave(filename = file.path(result_path, "plots",  sprintf("barplot-%s-%s-first_batch.png", DV, IV)), 
+           plot = plt, 
+           height = 3.5, # we can change dimensions of the plot output here
+           width = 5.5)
+    
+    plt = overlapping_ci_plot(DV, IV, first_batch=TRUE)
+    ggsave(filename = file.path(result_path, "plots",  sprintf("overlap-barplot-%s-%s-first_batch.png", DV, IV)), 
+           plot = plt, 
+           height = 3.5, # we can change dimensions of the plot output here
            width = 5.5)
   }
 }
@@ -235,6 +324,17 @@ plt = gridExtra::grid.arrange(common_barplot("Acceptability", "Intervention"),
                               bottom = notes)
 ggsave(filename = file.path(result_path, "plots", "intervention-barplot-acceptability-autonomy.png"), 
        plot = plt, 
+       height = 4, # we can change dimensions of the plot output here
+       width = 10)
+
+
+plt_first_batch = gridExtra::grid.arrange(common_barplot("Acceptability", "Intervention", first_batch = TRUE), 
+                                          common_barplot("Autonomy", "Intervention", first_batch = TRUE), 
+                                          nrow = 1, 
+                                          top = title, 
+                                          bottom = notes)
+ggsave(filename = file.path(result_path, "plots", "intervention-barplot-acceptability-autonomy-first-batch.png"), 
+       plot = plt_first_batch, 
        height = 4, # we can change dimensions of the plot output here
        width = 10)
 
