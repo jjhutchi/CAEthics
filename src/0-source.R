@@ -5,8 +5,10 @@
 # Paths
 path = file.path("~/Dropbox (BEAR)", "Ethics Data Analysis", "Stage 2 Analyses")
 result_path = file.path(path, "results")
+path_for_word = here::here("src/utils/tbl_figs")
 
 # Plot formatting
+require(ggplot2)
 theme_set(
   theme_bw(10) + 
     theme(

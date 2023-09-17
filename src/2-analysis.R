@@ -10,7 +10,7 @@ source(here::here("src/0-source.R"))
 df = read.csv(file.path(path, "clean/clean.csv"), stringsAsFactors = TRUE)
 baseline = read.csv(file.path(path, "clean/baseline.csv"), stringsAsFactors = TRUE)
 
-SKIP_CLMM_ESTIMATION = TRUE # if FALSE, will rerun CLMM models
+SKIP_CLMM_ESTIMATION = TRUE # FALSE will rerun CLMM models
 
 
 # Data prep ---- 
@@ -70,18 +70,18 @@ if(SKIP_CLMM_ESTIMATION) { # skip estimation (~10 hours to run on PC with i7 16G
   aov_fit_suc_int_c = read_result("aov_fit_suc_int_c")  
   
   # read in first batch files
-  fit_acc_c = read_result("fit_acc_c_first_batch")
-  fit_auto_c = read_result("fit_auto_c_first_batch")
-  fit_suc_c = read_result("fit_suc_c_first_batch")
-  fit_acc_int_c = read_result("fit_acc_int_c_first_batch")
-  fit_auto_int_c = read_result("fit_auto_int_c_first_batch")
-  fit_suc_int_c = read_result("fit_suc_int_c_first_batch")  
-  aov_fit_acc_c = read_result("aov_fit_acc_c_first_batch")
-  aov_fit_auto_c = read_result("aov_fit_auto_c_first_batch")
-  aov_fit_suc_c = read_result("aov_fit_suc_c_first_batch")
-  aov_fit_acc_int_c = read_result("aov_fit_acc_int_c_first_batch")
-  aov_fit_auto_int_c = read_result("aov_fit_auto_int_c_first_batch")
-  aov_fit_suc_int_c = read_result("aov_fit_suc_int_c_first_batch")
+  fit_acc_c_first_batch = read_result("fit_acc_c_first_batch")
+  fit_auto_c_first_batch = read_result("fit_auto_c_first_batch")
+  fit_suc_c_first_batch = read_result("fit_suc_c_first_batch")
+  fit_acc_int_c_first_batch = read_result("fit_acc_int_c_first_batch")
+  fit_suc_int_c_first_batch = read_result("fit_suc_int_c_first_batch")  
+  fit_auto_int_c_first_batch = read_result("fit_auto_int_c_first_batch")
+  aov_fit_acc_c_first_batch = read_result("aov_fit_acc_c_first_batch")
+  aov_fit_auto_c_first_batch = read_result("aov_fit_auto_c_first_batch")
+  aov_fit_suc_c_first_batch = read_result("aov_fit_suc_c_first_batch")
+  aov_fit_acc_int_c_first_batch = read_result("aov_fit_acc_int_c_first_batch")
+  aov_fit_auto_int_c_first_batch = read_result("aov_fit_auto_int_c_first_batch")
+  aov_fit_suc_int_c_first_batch = read_result("aov_fit_suc_int_c_first_batch")
 } else {
   
   tik = Sys.time()
@@ -189,6 +189,9 @@ tbl |>
   kable_classic_2() |> 
   add_header_above(c(" ", "Acceptability" = 4, "Autonomy" = 4, "Success" = 4)) |> 
   save_kable(file = file.path(result_path, "tables", "F_stat_all_dv_tbl.html"))
+
+# save to file format for exporting to word 
+saveRDS(tbl, file = file.path(path_for_word, "F_stat_all_dv_tbl.RDS"))
 
 #' Clean up ANOVA results for table - repeat for first batch
 
